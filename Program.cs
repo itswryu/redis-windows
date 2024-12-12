@@ -7,6 +7,10 @@ namespace RedisService
         static void Main(string[] args)
         {
             string configFilePath = "redis.conf";
+            if (System.Diagnostics.Process.GetCurrentProcess().ProcessName.Trim().Equals("SentinelService", StringComparison.OrdinalIgnoreCase))
+            {
+                configFilePath = "sentinel.conf";
+            }
 
             if (args.Length > 1 && args[0] == "-c")
             {
@@ -47,6 +51,10 @@ namespace RedisService
             var fileConf = configFilePath.Replace(diskSymbol + ":", "/cygdrive/" + diskSymbol).Replace("\\", "/");
 
             string fileName = Path.Combine(basePath, "redis-server.exe").Replace("\\", "/");
+            if (System.Diagnostics.Process.GetCurrentProcess().ProcessName.Trim().Equals("SentinelService", StringComparison.OrdinalIgnoreCase))
+            {
+                fileName = Path.Combine(basePath, "redis-sentinel.exe").Replace("\\", "/");
+            }
             string arguments = $"\"{fileConf}\"";
 
             ProcessStartInfo processStartInfo = new(fileName, arguments)
